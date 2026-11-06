@@ -647,7 +647,7 @@
           <h3>最後に、ほんとうのこと。</h3>
           <p>エスカレーターは本来、<wbr />左右どちらでも「<span class="nw">立ち止まって乗る</span>」のが<wbr />安全な乗り方です。<wbr />片側空けは、<wbr />急ぐ人への思いやりから生まれた<wbr />素敵な慣習。<wbr />でも実際は、<wbr />歩くと転びやすく、<wbr />片側にばかり重さがかかって<wbr />故障の原因になることもあります。<wbr />名古屋市のように「両側に立って利用を」と<wbr />条例で呼びかける街も出てきました。<wbr />だから次に乗るときは、<wbr /><span class="nw">手すりにつかまって</span>、<wbr />ちょっと景色でも<wbr /><span class="nw">眺めてみてください</span>。<wbr />急ぐ日には、<wbr />階段という名の近道が<wbr /><span class="nw">待っています</span>。</p>
         </div>
-        <textarea class="sharebox" id="shareText" rows="3" readonly></textarea>
+        <textarea class="sharebox" id="shareText" rows="4" readonly></textarea>
         <button class="bigbtn xbtn" id="btnX" type="button">𝕏 で結果をポストする<small>100人目指そう</small></button>
         <button class="ghostbtn" id="btnCopy" type="button">結果の文をコピーする</button>
         <div class="copied" id="copiedMsg"></div>
@@ -661,6 +661,7 @@
 
         var CLEAR_SCORE = 100;
         var LEGEND_SCORE = 100;
+        var SHARE_URL = "https://migi-ka-hidari-ka.pages.dev";
 
         var CITY = {
           tokyo:  { name: "東京", en: "TOKYO",  stand: "left"  },
@@ -1094,11 +1095,11 @@
           el("overRank").textContent = rk.title + "（"+state.score+"人）";
           el("overHype").textContent = rk.hype;
           var left = 100 - state.score;
-          el("shareText").value = state.score>=50
+          el("shareText").value = (state.score>=50
             ? "『右か、左か。』で "+state.score+" 人さばいた💪 100人いけたらすごいってマジだった…あと"+left+"人で伝説だったのに詰まった。東京は左、大阪は右、名古屋は両側。脳バグるのでやってみて #右か左か"
             : state.score>=32
             ? "『右か、左か。』"+whereText()+" "+state.score+" 人さばいた！全ステージ踏破クラス🏆 でも100人いけたらすごいらしくて、あと"+left+"人…遠すぎる。片側空けの風刺ゲー、最後のオチが良い #右か左か"
-            : "『右か、左か。』" + whereText() + " " + state.score + " 人で詰まった…ッ。100人いけたらすごいって聞いて始めたけど、道のり遠すぎない？街ごとに立つ側が真逆になる風刺ゲー #右か左か";
+            : "『右か、左か。』" + whereText() + " " + state.score + " 人で詰まった…ッ。100人いけたらすごいって聞いて始めたけど、道のり遠すぎない？街ごとに立つ側が真逆になる風刺ゲー #右か左か") + "\n" + SHARE_URL;
           el("copiedMsg").textContent = "";
           el("overScreen").hidden = false;
         }
@@ -1116,7 +1117,7 @@
           el("overRankIcon").textContent = rk2.icon;
           el("overRank").textContent = rk2.title;
           el("overHype").textContent = rk2.hype;
-          el("shareText").value = "👑『右か、左か。』で【100人】さばいた！！伝説到達。100人いけたらすごいって本当だった…東京左／大阪右／名古屋両側を1ミスもせず100連続。片側空け風刺ゲー、制覇しました #右か左か";
+          el("shareText").value = "👑『右か、左か。』で【100人】さばいた！！伝説到達。100人いけたらすごいって本当だった…東京左／大阪右／名古屋両側を1ミスもせず100連続。片側空け風刺ゲー、制覇しました #右か左か" + "\n" + SHARE_URL;
           el("copiedMsg").textContent = "";
           el("overScreen").hidden = false;
         }
