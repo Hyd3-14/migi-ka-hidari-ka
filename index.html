@@ -12,6 +12,8 @@
     <style>
       :root {
         color-scheme: light dark;
+        --esc-h: clamp(210px, 36dvh, 342px);
+        --toast-bg: #142f4d;
         --bg: #edf0f3;
         --panel: #ffffff;
         --panel-2: #f6f8fa;
@@ -171,7 +173,7 @@
       }
       .esc {
         position: relative;
-        height: 342px;
+        height: var(--esc-h);
         border-radius: 12px 12px 0 0;
         display: flex;
         overflow: hidden;
@@ -218,12 +220,12 @@
         pointer-events: none;
         transition: bottom 1s linear, opacity 1s linear;
       }
-      .rider.go { bottom: 300px; opacity: 0; }
+      .rider.go { bottom: calc(var(--esc-h) - 42px); opacity: 0; }
 
       /* ---------- Person ---------- */
       .person-zone {
         position: relative;
-        margin-top: -118px;
+        margin-top: calc(var(--esc-h) * -0.345);
         height: 150px;
         display: flex;
         justify-content: center;
@@ -449,6 +451,8 @@
       .banner .card {
         background: var(--sign-bg);
         color: var(--sign-ink);
+        border: 2px solid rgba(255,255,255,.35);
+        outline: 3px solid var(--accent);
         border-radius: 20px;
         padding: 22px 26px;
         text-align: center;
@@ -486,11 +490,55 @@
       .rankbox .ric { font-size:28px; line-height:1; }
       .rankbox .rt { font-size:15px; font-weight:800; line-height:1.35; }
       .rankbox .rs { font-size:12.5px; font-weight:700; color:var(--ink-soft); line-height:1.5; }
-      .toast { position:fixed; left:50%; top:14px; transform:translateX(-50%) translateY(-8px); background:var(--ink); color:#fff; font-size:13.5px; font-weight:800; padding:10px 14px; border-radius:999px; z-index:60; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s ease; white-space:nowrap; max-width:calc(100vw - 24px); overflow:hidden; text-overflow:ellipsis; }
+      /* Milestone toast ("○人突破！"): always a dark navy pill with a warm
+         accent ring, in BOTH color schemes. It previously used var(--ink),
+         which flips to near-white in dark mode and swallowed the white text. */
+      .toast { position:fixed; left:50%; top:14px; transform:translateX(-50%) translateY(-8px); background:var(--toast-bg); color:#ffffff; border:2px solid #ffb03a; font-size:14px; font-weight:800; padding:11px 18px; border-radius:999px; z-index:60; box-shadow:0 10px 28px rgba(6,18,32,.5); opacity:0; pointer-events:none; transition:.25s ease; white-space:nowrap; max-width:calc(100vw - 24px); overflow:hidden; text-overflow:ellipsis; }
+      @media (prefers-color-scheme: dark){ .toast{ background:#0b223c; color:#ffffff; border-color:#ffb03a; } }
       .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+      /* ---------- In-game compact layout ----------
+         While playing, the whole play area (sign -> escalator -> person ->
+         buttons) must fit a phone viewport with no scrolling, so the
+         Left / Right / Send-off buttons are usable from the first second.
+         Escalator height tracks the viewport (dvh) instead of a fixed
+         342px, secondary text is folded away, and spacing tightens. */
+      body.playing { --esc-h: clamp(168px, 29dvh, 300px); }
+      body.playing .wrap { padding: 6px 12px 12px; }
+      body.playing .audio-bar { margin-bottom: 6px; }
+      body.playing .sound-btn { padding: 5px 10px; font-size: 12px; }
+      body.playing .hud { margin-bottom: 6px; gap: 8px; }
+      body.playing .hud .combo { padding: 5px 11px; min-width: 102px; border-radius: 12px; }
+      body.playing .hud .combo .num { font-size: 24px; }
+      body.playing .hud .combo .lbl { margin-top: 2px; font-size: 11px; }
+      body.playing .hud .stagebox { padding: 5px 11px; border-radius: 12px; }
+      body.playing .hud .stagebox .nm { font-size: 16px; }
+      body.playing .goal { padding: 7px 10px 8px; margin-bottom: 6px; border-radius: 12px; }
+      body.playing .goal-track { margin-top: 6px; height: 6px; }
+      body.playing .goal-sub { display: none; }
+      body.playing .sign { padding: 8px 13px 10px; border-radius: 13px; }
+      body.playing .sign .city { font-size: 24px; }
+      body.playing .sign .rule { margin-top: 2px; font-size: 13px; line-height: 1.4; }
+      body.playing .timer { margin-top: 7px; height: 6px; }
+      body.playing .esc-frame { margin-top: 7px; padding: 8px 8px 0; border-radius: 14px; }
+      body.playing .person-zone { height: 128px; }
+      body.playing .person { padding: 6px 14px 6px; min-width: 150px; border-radius: 14px; }
+      body.playing .person .face { font-size: 36px; line-height: 1.05; }
+      body.playing .person .ptype { font-size: 13.5px; }
+      body.playing .person .bubble { font-size: 11.5px; }
+      body.playing .quip { min-height: 28px; font-size: 12px; line-height: 1.4; padding: 4px 6px 1px; }
+      body.playing .controls { margin-top: 6px; bottom: 6px; gap: 8px; }
+      body.playing .cbtn { min-height: 58px; padding: 10px 6px; font-size: 16px; border-radius: 13px; }
+      body.playing .hint { display: none; }
+      /* Very short viewports (landscape, small phones): squeeze a bit more */
+      @media (max-height: 700px) {
+        body.playing { --esc-h: clamp(140px, 26dvh, 240px); }
+        body.playing .goal { display: none; }
+        body.playing .audio-bar .left { display: none; }
+        body.playing .audio-bar { justify-content: flex-end; }
+      }
       @media (max-width: 420px) {
-        .esc { height: 300px; }
-        .rider.go { bottom: 258px; }
+        :root { --esc-h: clamp(190px, 33dvh, 300px); }
         .sign .city { font-size: 26px; }
         .sheet h1 { font-size: 29px; }
       }
@@ -1075,6 +1123,7 @@
 
         function startGame() {
           AudioSys.ensure(); AudioSys.startJingle(); AudioSys.startBGM();
+          document.body.classList.add("playing");
           state.playing = true;
           state.score = 0;
           state.stage = 0;
@@ -1087,6 +1136,17 @@
           el("startScreen").hidden = true;
           el("overScreen").hidden = true;
           spawnPerson();
+          // Insurance: even if the compact layout still overflows on a very
+          // short viewport, bring the action buttons into view immediately
+          // so the player never has to scroll before the first move.
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              var controls = document.querySelector(".controls");
+              if (controls && controls.scrollIntoView) {
+                try { controls.scrollIntoView({ block: "end", inline: "nearest", behavior: "auto" }); } catch (e) { controls.scrollIntoView(false); }
+              }
+            });
+          });
         }
 
         /* ---------- input: buttons ---------- */
