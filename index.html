@@ -1225,8 +1225,30 @@
         el("btnX").addEventListener("click", function(){
           AudioSys.click();
           var text = el("shareText").value;
-          var url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-          window.open(url, "_blank", "noopener,noreferrer");
+          var appUrl = "twitter://post?message=" + encodeURIComponent(text);
+          var webUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+          var appOpened = false;
+          function onVisibilityChange(){
+            if (document.hidden) appOpened = true;
+          }
+          document.addEventListener("visibilitychange", onVisibilityChange);
+          // Try to open the X app's compose screen directly via a
+          // programmatic anchor click (custom-scheme navigation).
+          var launcher = document.createElement("a");
+          launcher.href = appUrl;
+          launcher.style.display = "none";
+          document.body.appendChild(launcher);
+          launcher.click();
+          setTimeout(function(){ launcher.remove(); }, 100);
+          // Fallback: if the page is still visible after ~900ms, the app
+          // did not open (not installed / scheme blocked / desktop) —
+          // open the web intent as before.
+          setTimeout(function(){
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+            if (!appOpened && !document.hidden) {
+              window.open(webUrl, "_blank", "noopener,noreferrer");
+            }
+          }, 900);
         });
 
         updateGoal();
